@@ -60,7 +60,7 @@
     {{update section="persona" transform="copiarPersona"}}
   {{/transform}}
 
-  {{#action id="solicitudReclamo" source="notaSolicitudReclamo" label="Reclamo o Sugerencia" hide="true" transform="copiarSolicitudReclamo" type="add-subdoc" btnSolid="true" visibleMode="close" color="deep-orange" onlyPost="true"}}
+  {{#action id="solicitudReclamo" source="notaSolicitudReclamo" label="Reclamo o Sugerencia" hide="true" transform="copiarSolicitudReclamo" type="add-subdoc" btnSolid="true" visibleMode="close" color="deep-orange" onlyPost="true" userRole="solicitudReclamo"}}
     {{param servicio="reclamo"}}
   {{/action}}
 

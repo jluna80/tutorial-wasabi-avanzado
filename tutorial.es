@@ -108,3 +108,11 @@
 {"name":"moment","code":"finalizado","display":"Finalizado","order":4}
 {"index":{"_id":"moment/programado"}}
 {"name":"moment","code":"programado","display":"Programado","order":5}
+{"index":{"_id":"userRole/catalogoArticulos"}}
+{"name":"userRole","code":"catalogoArticulos","display":"Catálogo Artículos","order":1}
+{"index":{"_id":"userRole/catalogoClientes"}}
+{"name":"userRole","code":"catalogoClientes","display":"Catálogo Clientes","order":2}
+{"index":{"_id":"userRole/solicitudReclamo"}}
+{"name":"userRole","code":"solicitudReclamo","display":"Solicitud Reclamo o Sugerencia","order":3}
+{"index":{"_id":"userRole/tablerosSolicitudReclamo"}}
+{"name":"userRole","code":"tablerosSolicitudReclamo","display":"Tableros - Solicitud Reclamo o Sugerencia","order":3}
