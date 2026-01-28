@@ -1,0 +1,124 @@
+{{#define id="nota"}}
+  {{#view id="resumenNotas"}}
+    {{#pipeline}}
+      {{filter field="involucrados" in="=id"}}
+      {{group field="_id" type="count" as="count"}}
+    {{/pipeline}}  
+  {{/view}}
+  {{#view id="lista"}}
+    {{#find}}
+      {{include field="_type"}}
+      {{include field="_name"}}
+      {{include field="_created"}}
+      {{include field="_canceled"}}
+      {{include field="referencia"}}
+      {{include field="importe"}}
+      {{include field="_contrato"}}      
+      {{include field="tablero"}}
+      {{include field="persona"}}
+      {{include field="_notify"}}
+      {{include field="flujo"}}
+      {{include field="importe"}}
+      {{sort field="_id" direction="desc"}}
+      {{!-- {{search field="persona.nombreCompleto" elastic="true" elasticIndex="nota" elasticSort="_id"}} --}}
+      {{search field="_created.normalized" directSearch="true" startsWith="true" searchLowerCase="true"}}
+      {{search field="_name" directSearch="true" startsWith="true"}}
+      {{search field="persona.nombreCompleto" directSearch="true" startsWith="true"}}
+      {{search condition="=¡@buscar" field="persona.clave" directSearch="true"}}
+      {{search field="_created.date" type="date"}}
+      {{search field="_created.folio" directSearch="true" type="number"}}
+      {{search field="_created.consecutive" directSearch="true" type="number"}}
+      {{search field="_created._user"}}
+      {{search field="referencia" directSearch="true"}}
+      {{search field="referencias" directSearch="true"}}
+      {{search field="tokens" directSearch="true" searchNormalized="true"}}
+      {{filter condition="=personaId" field="persona.id" eq="=personaId"}}
+      {{filter condition="=involucrado" field="involucrados" in="=involucrado"}}
+      {{filter condition="=buscar" field="_name" eq="=buscar" or="true"}}
+      {{filter condition="=buscar" field="referencia" in="=buscar" or="true"}}
+      {{filter condition="=buscar" field="referencias" in="=buscar" or="true"}}
+      {{filter condition="=buscar" field="tokens" in="=buscar" or="true"}}
+      {{filter condition="=grupo" field="flujo.grupo" eq="=grupo"}}
+      {{filter condition="=esInicioProceso" field="flujo.esInicioProceso" eq="=true"}}
+      {{hint condition="=personaId" index="persona.id_1"}}
+    {{/find}}
+    {{calc field="flujoGrupo" value="=flujo.grupo!=_name?flujo.grupo:null"}}
+    {{calc field="leyenda" value="=_type=='notaRegistroDocumentoFlujo'?@referencia:null"}}
+  {{/view}}
+  {{#view id="listaInvolucrado"}}
+    {{#find}}
+      {{include field="_type"}}
+      {{include field="_name"}}
+      {{include field="_created"}}
+      {{include field="_canceled"}}
+      {{include field="referencia"}}
+      {{include field="importe"}}
+      {{include field="_contrato"}}      
+      {{include field="tablero"}}
+      {{include field="persona"}}
+      {{sort field="_id" direction="desc"}}
+      {{!-- {{search field="persona.nombreCompleto" elastic="true" elasticIndex="nota" elasticSort="_id"}} --}}
+      {{search field="_created.normalized" directSearch="true" startsWith="true" searchLowerCase="true"}}
+      {{search field="_name" directSearch="true" startsWith="true"}}
+      {{search field="persona.nombreCompleto" directSearch="true" startsWith="true"}}
+      {{search condition="=¡@buscar" field="persona.clave" directSearch="true"}}
+      {{search field="_created.date" type="date"}}
+      {{search field="_created.folio" directSearch="true" type="number"}}
+      {{search field="_created.consecutive" directSearch="true" type="number"}}
+      {{search field="_created._user"}}
+      {{search field="referencia" directSearch="true"}}
+      {{search field="referencias" directSearch="true"}}
+      {{search field="tokens" directSearch="true" searchNormalized="true"}}
+      {{filter field="involucrados" in="=involucrado"}}
+      {{filter condition="=personaId" field="persona.id" eq="=personaId"}}
+      {{filter condition="=buscar" field="_name" eq="=buscar" or="true"}}
+      {{filter condition="=buscar" field="referencia" in="=buscar" or="true"}}
+      {{filter condition="=buscar" field="referencias" in="=buscar" or="true"}}
+      {{filter condition="=buscar" field="tokens" in="=buscar" or="true"}}
+      {{filter condition="=grupo" field="flujo.grupo" eq="=grupo"}}
+      {{filter condition="=esInicioProceso" field="flujo.esInicioProceso" eq="=true"}}
+      {{hint condition="=personaId" index="persona.id_1"}}
+    {{/find}}
+    {{calc field="flujoGrupo" value="=flujo.grupo!=_name?flujo.grupo:null"}}
+    {{calc field="leyenda" value="=_type=='notaRegistroDocumentoFlujo'?@referencia:null"}}
+  {{/view}}  
+  {{#browser id="lista" view="lista" showDoc="true" docOrientation="vertical" docPosition="75%" zoom="80%" showActions="preliminar,preliminar2,ver,ver2,subdoc,tool,tool2,tool3,tool4,tool5,tool6,menuCfdi,menuVer"}}
+    {{list itemTemplate="verNota" allowSearch="true" allowRefresh="true"}}
+  {{/browser}}    
+{{/define}}
+{{#markup}}  
+  {{#template id="verNota"}}
+    <div>{{_name}}</div>
+    {{#if _canceled}}
+      <span class="fondo-gris" style="font-size:12px;float:right;"><strong>&nbsp;&nbsp;Cancelado&nbsp;&nbsp;</strong></span>
+    {{/if}}
+    <span style="font-size:12px;">{{persona.nombreCompleto}}</span>
+    <span style="font-size:12px;float:right;">{{date _created.date "DD/MMM/YYYY h:mma"}}</span>
+    {{#if referencia}}
+    <br><span style="font-size:12px;">{{referencia}}</span>
+    {{/if}}
+  {{/template}}
+  {{#template id="verNotaPendiente"}}
+    <div class="list-material">
+      <li class="has-action-left">
+        {{#if _canceled}}
+          <div class="list-action-left"><i class="icon ion-{{flujo.icono}} text-grey"></i></div>
+        {{else}}
+          <div class="list-action-left"><i class="icon ion-{{flujo.icono}} text-{{flujo.color}}"></i></div>
+        {{/if}}
+        <div class="list-content">
+          {{#if persona.nombreCompleto}}
+            <span class="title">{{persona.nombreCompleto}}<span style="font-size:12px;float:right;">{{#if _created.captureDate}}{{date _created.captureDate "DD/MMM/YYYY"}}{{else}}{{date _created.date "DD/MMM/YYYY"}}{{/if}}</span></span>
+            <span>{{_name}}<span style="font-size:12px;float:right;">{{#if _created.captureDate}}{{date _created.captureDate "h:mma"}}{{else}}{{date _created.date "h:mma"}}{{/if}}</span></span>
+          {{else}}
+          <span class="title">{{_name}}</span>
+          {{/if}}                  
+          {{#unless flujoGrupo}}<br>{{/unless}}
+          {{#if _canceled}}
+          <span class="fondo-gris-obscuro2" style="font-size:12px;float:right;"><strong>&nbsp;&nbsp;Cancelado&nbsp;&nbsp;</strong></span>
+          {{/if}}
+        </div>          
+      </li>
+    </div>
+  {{/template}}  
+{{/markup}}

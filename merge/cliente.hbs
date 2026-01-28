@@ -1,0 +1,44 @@
+{{#define id="cliente"}}
+  {{action id="eliminar" hide="true"}}
+    
+  {{action id="menuReportesClientes" hide="true" type="menu" menu="menuReportesClientes" label="Reportes" color="grey" isBrowserAction="true"}}
+  {{#menu id="menuReportesClientes" color="grey"}}
+    {{item action="reporteListaClientes" text="Lista Clientes"}}
+  {{/menu}}  
+
+  {{#view id="listaClientes"}}
+    {{#find}}
+      {{include field="base"}}
+      {{sort field="base.clave" direction="asc"}}
+    {{/find}}
+  {{/view}}
+  
+  {{#view id="lista"}}
+    {{#find}}
+      {{include field="base.estado"}}
+      {{include field="base.clave"}}
+      {{include field="base.nombre"}}
+      {{search field="base.clave"}}
+      {{search field="base.nombre"}}
+      {{search field="base._estado"}}
+      {{sort field="base.clave" direction="asc"}}
+    {{/find}}
+  {{/view}}
+  {{#grid id="adjuntos" section="adjuntos" allowRemove="true" allowSort="true" sortBy="orden, fecha"}}
+    {{column field="nombre" width="350"}}
+    {{column field="tipo" width="200"}}
+    {{column field="fecha" width="100" readOnly="true"}}
+    {{column field="ext" width="100" readOnly="true"}}
+    {{column field="tamano" width="100" readOnly="true"}}
+    {{column field="orden" width="60"}}
+  {{/grid}}
+{{/define}}
+{{#markup}}
+  {{#template id="lista"}}
+    <div>
+      {{_name}}</br>
+      <span style="font-size:12px;">{{base.clave}}</span>
+      <span style="font-size:12px;float:right;">{{base._estado}}</span>
+    </div>
+  {{/template}}
+{{/markup}}

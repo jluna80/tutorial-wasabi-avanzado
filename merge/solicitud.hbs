@@ -1,0 +1,163 @@
+{{#define type="doc" id="solicitud"}}
+  {{param defaultDisplay="_created.short"}}
+  {{param name="=persona.nombreCompleto||base._nota||'Solicitud'"}}
+  {{action id="abrir" hide="true"}}
+
+  {{action id="adjuntos" condition="=true" type="openFolder" label="Adjuntos" items="=adjuntos" color="grey" visibleMode="close"}}
+  {{action id="menuFlujo" hide="true" type="menu" menu="menuFlujo" label="Flujo" color="grey" forceReadOnly="true"}}
+  {{#menu id="menuFlujo" color="grey"}}
+    {{item action="flujoEjecucion" text="Flujo Ejecución"}}
+  {{/menu}}  
+  {{action id="flujoEjecucion" hide="true" type="bpmn" color="blue" label="Flujo Ejecución" title="_params._name||'Sub Proceso Ejecución'" visibleMode="close" bpmn="=calc.first(fn('bpmn', _params.base.tipoSolicitud, _params.base.subTipoSolicitud)).fileName" moment="=control.subMoment||_updated.moment" moments="=_subMoment||_moment" condition="=calc.in(_updated.moment,['porAutorizar','porAutorizarCredito','programado','programado2','entregado','finalizado','vistoBueno','vistoRegular','vistoMalo'])||control.subMoment"}} 
+
+  {{#view id="activos"}}
+    {{#find}}
+      {{include field="_created"}}
+      {{include field="_updated"}}
+      {{include field="_date"}}
+      {{include field="_parent"}}
+      {{include field="_attributes"}}
+      {{include field="base"}}
+      {{include field="persona"}}
+      {{include field="reprogramado"}}
+      {{include field="info"}}
+      {{include field="control"}}
+      {{sort field="_id" direction="desc"}}
+      {{search field="_name"}}
+      {{search field="_parent.name"}}
+      {{search field="persona.nombreCompleto"}}
+      {{search condition="=¡@buscar" field="persona.clave" directSearch="true"}}
+      {{search field="base._nota"}}
+      {{search field="_created.folio" type="number"}}
+      {{search field="_date" type="date"}}
+      {{search field="_updated._moment"}}
+      {{search field="control._subMoment"}}
+      {{filter field="base.estatus" in="=fn('listaEstatus','activos')"}}
+      {{filter field="_updated.moment" in="=calc.presetNotIn('cfg.moment','confirmado,finalizado,cancelado,descartado,rechazado,suspendido,suspendidoEntregado,facturado,fragmentado,cerrado,cerradoConforme,cerradoTercero,cerradoCorregido,cerradoReparado',true)"}}
+      {{filter condition="=servicio" field="base.servicio" eq="=servicio" orInPresetPartOf="cfg.servicio"}}      
+      {{filter condition="=momento" field="_updated.moment" eq="=momento"}}
+      {{filter condition="=subMomento" field="control.subMoment" eq="=subMomento"}}
+    {{/find}}
+    {{join source="persona" view="contexto" as="join" id="persona.id"}}
+    {{calc field="nombre" type="expr" value="=join._name"}}
+    {{calc field="estatus" type="expr" value="=calc.getRef(@_updated,'moment')||base.estatus"}}
+    {{calc field="_estatus" type="expr" value="=calc.getRef(@_updated,'_moment')||base._estatus"}}
+  {{/view}}
+
+  {{#view id="inactivos"}}
+    {{#find}}
+      {{include field="_created"}}
+      {{include field="_updated"}}
+      {{include field="_date"}}
+      {{include field="_parent"}}
+      {{include field="_attributes"}}
+      {{include field="persona"}}
+      {{include field="base"}}
+      {{include field="reprogramado"}}
+      {{include field="control"}}
+      {{include field="info"}}
+      {{include field="_moment"}}
+      {{include field="_moment2"}}
+      {{sort condition="=conPrioridad" field="base.prioridad" direction="asc"}}
+      {{sort condition="=ordenNombreCorto" field="base.nombreCorto" direction="asc"}}
+      {{!-- {{sort field="base.fechaHoraCita" direction="asc"}} --}}
+      {{sort field="_id" direction="desc"}}
+      {{search field="_name"}}
+      {{search field="_parent.name"}}
+      {{search field="persona.nombreCompleto"}}
+      {{search condition="=¡@buscar" field="persona.clave" directSearch="true"}}
+      {{search field="_date" type="date"}}
+      {{search field="_created.folio" type="number"}}
+      {{search field="base._prioridad"}}      
+      {{search field="_updated._moment"}}
+      {{search field="control._subMoment"}}
+      {{!-- {{filter field="base.estatus" in="=fn('listaEstatus','activos')"}} --}}
+      {{filter field="_updated.moment" in="finalizado,cancelado,descartado,rechazado,suspendido,suspendidoEntregado,facturado,fragmentado,cerradoConforme,cerradoTercero,cerradoCorregido,cerradoReparado,incumplimiento,centinela,vistoBueno,vistoRegular,vistoMalo,invitacionesEnviadas"}}
+      {{filter condition="=servicio" field="base.servicio" eq="=servicio" orInPresetPartOf="cfg.servicio"}}      
+      {{filter condition="=momento" field="_updated.moment" eq="=momento"}}
+      {{filter condition="=subMomento" field="control.subMoment" eq="=subMomento"}}
+    {{/find}}
+    {{join source="persona" view="contexto" as="join" id="persona.id"}}
+    {{calc field="nombre" type="expr" value="=join._name"}}
+    {{calc field="estatus" type="expr" value="=calc.getRef(@_updated,'moment')||base.estatus"}}
+    {{calc field="_estatus" type="expr" value="=calc.getRef(@_updated,'_moment')||base._estatus"}}
+  {{/view}}
+
+  {{#view id="todo"}}
+    {{#find limit="-1"}}
+      {{include field="_created"}}
+      {{include field="_updated"}}
+      {{include field="_date"}}
+      {{include field="_parent"}}
+      {{include field="_moment"}}
+      {{include field="persona"}}
+      {{include field="base"}}
+      {{include field="info"}}
+      {{include field="control"}}
+      {{sort condition="=!@todo" field="base.fechaHoraCita" direction="desc"}}
+      {{sort field="_id" direction="desc"}}
+      {{search field="_name"}}
+      {{search field="_parent.name"}}
+      {{search field="persona.nombreCompleto"}}
+      {{search condition="=¡@buscar" field="persona.clave" directSearch="true"}}
+      {{search field="_date" type="date"}}
+      {{search field="_created.folio" type="number"}}
+      {{search field="_updated._moment"}}
+      {{search field="control._subMoment"}}
+      {{filter condition="=servicio" field="base.servicio" eq="=servicio" orInPresetPartOf="cfg.servicio"}}      
+      {{filter condition="=momento" field="_updated.moment" eq="=momento"}}
+      {{filter condition="=subMomento" field="control.subMoment" eq="=subMomento"}}
+    {{/find}}
+    {{join source="persona" view="_name" as="join" id="persona.id"}}
+    {{calc field="nombre" type="expr" value="=join._name"}}
+    {{calc field="estatus" type="expr" value="=calc.getRef(@_updated,'moment')||base.estatus"}}
+    {{calc field="_estatus" type="expr" value="=calc.getRef(@_updated,'_moment')||base._estatus"}}
+  {{/view}}  
+
+  {{#browser id="activas" name="Solicitudes Activas" view="activos" showDoc="true" docOrientation="vertical" docPosition="75%" zoom="80%" showActions="preliminar, adjuntos, menuFlujo"}}
+    {{list itemTemplate="verSolicitud" allowSearch="true" allowRefresh="true" allowEdit="false" allowInsert="false"}}
+  {{/browser}}
+
+  {{#browser id="inactivas" name="Solicitudes Inactivas" view="inactivos" showDoc="true" docOrientation="vertical" docPosition="75%" zoom="80%" showActions="preliminar, adjuntos, menuFlujo"}}
+    {{list itemTemplate="verSolicitud" allowSearch="true" allowRefresh="true" allowEdit="false" allowInsert="false"}}
+  {{/browser}}
+
+  {{#transform id="copiarAvance"}}
+    {{update section="persona" value="=persona"}}
+    {{#update section="base"}}
+      {{set tipoAvance="next"}}
+      {{set hint="=_params.hint"}}
+      {{set solicitud="=_params"}}
+      {{set tipoSolicitud="=_params.base.tipoSolicitud"}}
+      {{set subTipoSolicitud="=_params.base.subTipoSolicitud"}}
+      {{set momento="=_params._updated.moment"}}
+      {{set subMomento="=_params.subMomento"}}
+    {{/update}}
+  {{/transform}}
+
+  {{action id="avance" source="notaRegistroAvance" label="=_params.subTypeName||'Avance'" subType="=calc.concatLodash(_params.servicio,_params.subType)" subTypeName="=_params.subTypeName||'Avance'" transform="copiarAvance" hide="true" type="add-subdoc" visibleMode="close" color="deep-orange" icon="forward" onlyPost="true" btnSolid="true"}} 
+  {{action id="avanceFinal" source="notaRegistroAvance" label="=_params.subTypeName||'Avance'" subType="=calc.concatLodash(_params.servicio,_params.subType)" subTypeName="=_params.subTypeName||'Avance'" transform="copiarAvance" hide="true" type="add-subdoc" visibleMode="close" color="green" icon="checkmark" onlyPost="true" btnSolid="true"}} 
+{{/define}}
+
+{{#markup}}
+  {{#template id="verSolicitud"}}
+    <div class="list-material">
+      <li class="has-action-left">
+        <div class="list-action-left">
+        </div>
+        <div class="list-content">
+          <span class="title">{{nombre}}
+          </span>
+          <span style="font-size:12px;white-space:pre-wrap;font-style:italic;">{{_name}}</span>
+          {{#if control.subMoment}}
+          <span style="float:right;" class="subMoment">&nbsp;&nbsp;{{control._subMoment}}</span>
+          {{/if}}
+          {{#if control.subMoment}}
+            {{#unless _momentoActual}}{{#unless leyenda}}<br>{{/unless}}{{/unless}}
+          {{/if}}
+          <span style="color:darkcyan;font-size:12px;float:right;"><strong>&nbsp;&nbsp;{{_estatus}}</strong></span>
+        </div>          
+      </li>
+    </div>
+  {{/template}}    
+{{/markup}}

@@ -1,0 +1,230 @@
+{{#define id="persona"}}
+  {{param defaultDisplay="_name"}}
+  {{param defaultView="todos"}}
+  {{param pageStart="1"}}
+  {{param pagesJustified="true"}}
+  {{param pagesTabsPosition="left"}}
+  {{param pagesTabsWidth="10%"}}
+  {{param pagesTabsMinPadding="false"}}
+  {{param allowAdd="true"}}
+  {{param allowEdit="true"}}
+  {{param allowDirectOperations="true"}}
+  {{param attachSection="adjuntos"}}
+  {{param attachLanguage="es"}}
+  {{param confirmUnSaved="true"}}
+  {{param showChangeHistory="true"}}
+  {{param pdfPageSize="letter"}}
+  {{param startOnOpen="persona"}}
+  {{param baseName="Datos Generales"}}
+  {{param displayExpr="persona.nombre"}}
+  {{param name="=_params._board||_parent.display||_name"}}
+  {{param bannerTopTemplate="banner4"}}
+  {{param addClass="no-padding-right"}}
+
+  {{tileView id="resumen" height="100%" width="100%" itemMargin="15" baseItemHeight="130" baseItemWidth="130" direction="vertical" section="resumen" itemTemplate="resumen" orderBy="orden" controlFromMetadata="true"}}
+  {{section id="_temp" temp="true" beforeStart="true"}}
+
+  {{#view id="clientes"}}
+    {{#find}}
+      {{include field="persona.nombre"}}
+      {{include field="persona.clave"}}
+      {{include field="persona.grupo"}}    
+      {{sort condition="=!board.sort" field="_name" direction="asc"}}
+      {{sort condition="=board.sort" field="=board.sort" direction="=board.direction"}}
+      {{filter field="_hide" neq="=true"}}
+      {{filter field="_parent.type" eq="cliente"}}
+      {{search field="persona.nombreCompleto"}}
+      {{search field="persona.clave"}}
+    {{/find}}
+  {{/view}}
+
+  {{#view id="_name"}}
+    {{#find}}
+      {{include field="_name"}}
+    {{/find}}
+  {{/view}}
+
+  {{#view id="contexto"}}
+    {{#find}}
+      {{include field="_name"}}
+      {{include field="_parent.type"}}
+      {{include field="_readOnly"}}
+      {{include field="_flags"}}
+      {{include field="_updated"}}
+      {{include field="info"}}
+      {{include field="contexto"}}
+    {{/find}}
+  {{/view}}
+
+  {{#transform id="copiarSolicitudReclamo"}}
+    {{update section="persona" transform="copiarPersona"}}
+  {{/transform}}
+
+  {{#action id="solicitudReclamo" source="notaSolicitudReclamo" label="Reclamo o Sugerencia" hide="true" transform="copiarSolicitudReclamo" type="add-subdoc" btnSolid="true" visibleMode="close" color="deep-orange" onlyPost="true"}}
+    {{param servicio="reclamo"}}
+  {{/action}}
+
+  {{#action id="verExpediente" hide="true" type="sub-link" label="Bitácora General" color="green" visibleMode="close"}}
+    {{#link href="='/nota/bitacora'" name="=calc.concat('Bitácora:', persona.nombreCompleto)" title="=calc.concat('Bitácora:', persona.nombreCompleto)"}}
+      {{param involucrado="_id"}}
+    {{/link}}
+  {{/action}}
+{{/define}}
+
+{{#markup}}
+  {{#page name="Dashboard"}}  {{!-- se pinta como una page --}}
+    {{#row class="no-padding-right"}}
+      {{#col medium="35%"}}
+        {{widget type="textBox" textBox="buscarWidgets"}}
+      {{/col}}
+      {{#col medium="55%"}}
+        {{widget type="buttonBox" buttonBox="refreshDoc"}}
+        {{widget type="buttonBox" buttonBox="addFavorite"}}
+        {{widget type="buttonBox" buttonBox="removeFavorite"}}        
+      {{/col}}
+      {{#col medium="10%"}}
+      \{{#if persona.esServicio}}
+      <img class="image-service" src="https://his-imagenes.s3-accelerate.amazonaws.com/widgets/\{{persona.servicio}}.png">
+      \{{/if}}
+      {{/col}}
+      {{#col medium="100%"}}
+        {{widget type="tileView" tileView="resumen"}}
+      {{/col}}
+    {{/row}}
+  {{/page}}
+  {{#template id="resumen"}}
+    <div class="auto-tile-resumen{{#if disabled}}{{else}} pointer{{/if}} table-responsive dash">
+      {{#if titleColor}}
+      <table class="auto-tile2-table">
+        <tr>
+          <td style="width:95%">
+            <h5 class="auto-tile2-h5">{{_name}}</h5>
+          </td>
+          <td style="width:5%">
+            <img class="auto-img-resumen image-center" src="https://his-imagenes.s3-accelerate.amazonaws.com/widgets/{{imageId}}.png">
+          </td>
+        </tr>
+      </table>
+      {{else}}
+      <table class="auto-tile-table">
+        <tr>
+          <td style="width:95%">
+            <h5 class="auto-tile-h5">{{_name}}</h5>
+          </td>
+          <td style="width:5%">
+            <img class="auto-img-resumen image-center" src="https://his-imagenes.s3-accelerate.amazonaws.com/widgets/{{imageId}}.png">
+          </td>
+        </tr>
+      </table>
+      {{/if}}
+      <div class="table-responsive dash" style="height: 84%;width: 100%;display:grid">
+        {{#if isServiceLevel}}
+          <span class="dash-center fondo-{{backgroudColor}} color-{{color}}"><strong>{{#if value}}{{number value "#.###"}}{{else}}N/A{{/if}}</strong></span>
+        {{/if}}
+        {{#if isSentinel}}
+          <span class="dash-center fondo-{{backgroudColor}} color-{{color}}"><strong>&nbsp;&nbsp;{{#if value}}{{value}}{{else}}{{/if}}&nbsp;&nbsp;</strong></span>
+        {{/if}}
+        {{#if isCounter}}
+          <span class="dash-center fondo-{{backgroudColor}} color-{{color}}"><strong>&nbsp;&nbsp;{{#if count}}{{count}}{{else}}{{/if}}&nbsp;&nbsp;</strong></span>
+        {{/if}}
+        {{#if isValue}}
+          <span class="dash-center fondo-{{backgroudColor}} color-{{color}}"><strong>&nbsp;&nbsp;{{#if value}}{{value}}{{else}}{{/if}}&nbsp;&nbsp;</strong></span>
+        {{/if}}
+        {{#if isServiceDash}}
+          {{#if clickToView}}
+            <span>&nbsp;&nbsp;Dar click para ver la información...&nbsp;&nbsp;</span>
+          {{else}}            
+            {{#if backgroudColor}}
+            <span class="dash-center fondo-{{backgroudColor}} color-{{color}}"><strong>{{number count "#,"}}</strong></span>
+            {{else}}
+              {{#if serviceDash.white}}
+                <span class="dash-center"><strong>{{serviceDash.white}}</strong></span>
+              {{/if}}
+              {{#if serviceDash.grey}}
+                <span class="dash-center fondo-gris"><strong>{{serviceDash.grey}}</strong></span>
+              {{/if}}
+              {{#if serviceDash.blue}}          
+                <span class="dash-center fondo-azul"><strong>{{serviceDash.blue}}</strong></span>
+              {{/if}}
+              {{#if serviceDash.green}}
+              <span class="dash-center fondo-verde"><strong>{{serviceDash.green}}</strong></span>
+              {{/if}}
+              {{#if serviceDash.yellow}}
+                <span class="dash-center fondo-amarillo-claro"><strong>{{serviceDash.yellow}}</strong></span>
+              {{/if}}
+              {{#if serviceDash.red}}
+                <span class="dash-center fondo-rojo"><strong>{{serviceDash.red}}</strong></span>
+              {{/if}}
+              {{#if serviceDash.black}}
+                <span class="dash-center fondo-negro"><strong>{{serviceDash.black}}</strong></span>
+              {{/if}}            
+            {{/if}}
+          {{/if}}
+        {{else}}
+          {{#if unificarLista}}
+            <table>
+              <tbody>
+                {{#each lista}}
+                  <tr style="font-size:{{fontSize}};">
+                  {{!-- {{#if url}}
+                    <td style="white-space:normal">
+                      <strong>{{etiqueta}}: </strong><a class="link" href="{{url}}" target="_blank">{{nombre}}</a>
+                    </td>
+                  {{else}} --}}
+                    {{#if nombre}}
+                    <td class="table-unify">{{#if etiqueta}}<strong>{{etiqueta}}:</strong> {{/if}}{{nombre}}{{#if desde}} (Duración: <strong>{{fromNowTime desde}}</strong>){{/if}}</td>
+                    {{else}}
+                      {{#if desde}}
+                      <td class="table-unify">{{#if etiqueta}}<strong>{{etiqueta}}</strong> (Duración: <strong>{{fromNowTime desde}}</strong>){{/if}}</td>
+                      {{/if}}
+                    {{/if}}
+                  {{!-- {{/if}} --}}
+                  </tr>
+                {{/each}}     
+              </tbody>
+            </table>
+          {{else}}
+            <table class="table record auto-form-record">
+              <tbody>
+                {{#each lista}}
+                  <tr style="font-size:{{fontSize}};">
+                  {{#if importe}}
+                    <span class="dash-center fondo-{{backgroudColor}} color-{{color}}"><strong>${{number importe "#,."}}</strong></span>
+                  {{else}}
+                    {{#if conteo}}
+                      <span class="dash-center fondo-{{backgroudColor}} color-{{color}}"><strong>{{number conteo "#,"}}</strong></span>
+                    {{else}}
+                      {{#if nombre}}
+                        <td class="table-data center">{{#if etiqueta}}<strong>{{etiqueta}}:</strong> {{/if}}{{nombre}}{{#if desde}} (Duración: <strong>{{fromNowTime desde}}</strong>){{/if}}</td>
+                      {{else}}
+                        {{#if desde}}
+                          <td class="table-data center">{{#if etiqueta}}<strong>{{etiqueta}}</strong> (Duración: <strong>{{fromNowTime desde}}</strong>){{/if}}</td>
+                        {{/if}}
+                      {{/if}}
+                    {{/if}}
+                  {{/if}}
+                  </tr>
+                {{/each}}     
+              </tbody>
+            </table>
+          {{/if}}
+        {{/if}}
+      </div>
+    </div>
+  {{/template}}  
+  {{#template id="verCliente"}}
+    <div class="list-material">
+      <li class="has-action-left">
+        <div class="list-action-left"><i class="icon ion-{{contexto.icono}} text-{{contexto.color}}"></i></div>
+        <div class="list-content">
+          {{persona.nombre}}
+          <span style="font-size:12px;float:right;">{{persona.grupo}}</span>
+          </br><span style="font-size:12px;">{{persona.clave}}</span>
+          {{#if _readOnly}}
+          <span class="read-only" style="font-size:12px;"><strong>&nbsp;&nbsp;Solo Lectura&nbsp;&nbsp;</strong></span>
+          {{/if}}
+        </div>
+      </li>
+    </div>
+  {{/template}}
+{{/markup}}

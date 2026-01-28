@@ -1,0 +1,79 @@
+{{#define id="_cfg" type="cfg" name="Configuración Interna"}} 
+
+  {{#transform id="copiarPersona"}}
+    {{set id="=_id"}}
+    {{set parentId="=_parent.id"}}
+    {{set tipoExpediente="=persona.tipoExpediente"}}
+    {{set nombreCompleto="=persona.nombreCompleto"}}
+    {{set apellidoPaterno="=persona.apellidoPaterno"}}
+    {{set apellidoMaterno="=persona.apellidoMaterno"}}
+    {{set nombres="=persona.nombres"}}
+    {{set clave="=persona.clave"}}
+  {{/transform}}
+
+  {{#function id="folioServiceName"}}
+    {{define type="param" id="name"}}
+    {{define type="param" id="created"}}
+    {{default return="=(!@created.service||@created.service=='ver')?calc.concat(@name, @created.folio):calc.concat(@name, (@created.board==='telemedicina')?@created._board:'', @created._service, @created.folio)"}}
+  {{/function}}
+
+  {{#function id="dynamicName"}}
+    {{define type="param" id="name"}}
+    {{define type="param" id="created"}}
+    {{default return="=calc.concat(@created.name||@name, @created.folio)"}}
+  {{/function}}
+
+  {{#function id="dynamicServiceName"}}
+    {{define type="param" id="name"}}
+    {{define type="param" id="created"}}
+    {{default return="=@created.subType?calc.concat(@created.name, @created.folio):fn('folioServiceName', name, created)"}}
+  {{/function}}
+
+  {{#function id="folioName"}}
+    {{define type="param" id="name"}}
+    {{define type="param" id="created"}}
+    {{default return="=calc.concat(@name, (@created.board==='telemedicina')?@created._board:'', @created.folio)"}}
+  {{/function}}  
+
+  {{#function id="listaEstatus"}}
+    {{define type="param" id="tipo"}}
+    {{when tipo="activos" return="nuevo,instalar,continuar,activo-controlado,activo-no-controlado,no-realizado"}}
+    {{when tipo="inactivos" return="suspender,eliminar,remover,inactivo,rechazado,descartado,cancelado,sinExistencia"}}
+  {{/function}}  
+{{/define}}
+
+{{#markup}}
+  {{#template id="formaContacto"}}
+    {{_sistema}}{{#if uso}} {{_uso}}{{/if}}: {{valor}}
+  {{/template}}
+
+  {{#template id="direccion"}}
+    {{#if esDomicilioFiscal}}<br>Domicilio Fiscal: {{/if}}
+    <br>{{calle}} {{numeroExterior}} {{numeroInterior}}
+    <br>{{colonia}}{{#if delegacion}}, {{delegacion}}{{/if}}
+    <br>{{codigoPostal}} {{#if ciudad}}, {{ciudad}}{{/if}}{{#if estado}}, {{estado}}{{/if}}{{#if pais}}, {{_pais}}{{/if}}
+  {{/template}}
+  
+  {{#template id="contacto"}}
+    {{#if nombreCompleto}}<br>Nombre Completo: {{nombreCompleto}}{{/if}}
+    {{#if puestoCargo}}<br>Puesto y/o Cargo: {{puestoCargo}}{{/if}}
+    {{#if area}}<br>Área: {{area}}{{/if}}
+    {{#if subArea}}<br>Sub área: {{subArea}}{{/if}}
+    {{#if tipoPersona}}<br>Tipo Persona: {{_tipoPersona}}{{/if}}
+    {{#if telefonoMovil}}<br>Teléfono Móvil: {{telefonoMovil}}{{/if}}
+    {{#if telefonoTrabajo}}<br>Teléfono Trabajo: {{telefonoTrabajo}}{{/if}}
+    {{#if telefonoCasa}}<br>Teléfono Casa: {{telefonoCasa}}{{/if}}
+    {{#if otrosTelefonos}}<br>Otros Teléfonos: {{otrosTelefonos}}{{/if}}
+    {{#if email}}<br>Correo Electrónico: {{email}}{{/if}}
+    {{#if email2}}<br>Correo Electrónico 2: {{email2}}{{/if}}
+    {{#if paginaWeb}}<br>Página Web: {{paginaWeb}}{{/if}}
+    {{#if comentarios}}<br>{{comentarios}}{{/if}}
+  {{/template}}
+  
+  {{#template id="reclamo"}}
+    {{#if suspender}}(Suspendido) {{/if}}
+    {{#if articulo}}<br>Artículo: {{_articulo}}{{/if}}
+    {{#if motivo}}<br>Motivo: {{_motivo}}{{/if}}
+    {{#if comentarios}}<br>{{comentarios}}{{/if}}
+  {{/template}}  
+{{/markup}}

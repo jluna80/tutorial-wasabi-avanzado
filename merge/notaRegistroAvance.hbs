@@ -1,0 +1,18 @@
+{{#define id="notaRegistroAvance"}}
+  {{param requestType="=base.tipoSolicitud"}}
+  {{param requestSubType="=base.subTipoSolicitud"}}
+  {{param attribute1="=calc.first(fn((base.tipoAvance||'next')+'Step', base.tipoSolicitud, base.subTipoSolicitud, base.momento, base.subMomento, base.hint||base.diagnostico||base.resolucion||base.formaEntrega, base.subDiagnostico)).newMoment"}}
+  {{param attribute2="=calc.first(fn((base.tipoAvance||'next')+'Step', base.tipoSolicitud, base.subTipoSolicitud, base.momento, base.subMomento, base.hint||base.diagnostico||base.resolucion||base.formaEntrega, base.subDiagnostico)).newMomentName"}}
+  {{param attribute3="=calc.first(fn((base.tipoAvance||'next')+'Step', base.tipoSolicitud, base.subTipoSolicitud, base.momento, base.subMomento, base.hint||base.diagnostico||base.resolucion||base.formaEntrega, base.subDiagnostico)).newSubMoment"}}
+  {{param attribute4="=calc.first(fn((base.tipoAvance||'next')+'Step', base.tipoSolicitud, base.subTipoSolicitud, base.momento, base.subMomento, base.hint||base.diagnostico||base.resolucion||base.formaEntrega, base.subDiagnostico)).newSubMomentName"}}
+  {{param attribute5="=calc.first(fn((base.tipoAvance||'next')+'Step', base.tipoSolicitud, base.subTipoSolicitud, base.momento, base.subMomento, base.hint||base.diagnostico||base.resolucion||base.formaEntrega, base.subDiagnostico)).newValidate"}}
+
+  {{#grid id="adjuntos" section="adjuntos" allowRemove="true" allowSort="true" sortBy="orden, fecha"}}
+    {{column field="nombre" width="350"}}
+    {{column field="tipo" width="200"}}
+    {{column field="fecha" width="100" readOnly="true"}}
+    {{column field="ext" width="100" readOnly="true"}}
+    {{column field="tamano" width="100" readOnly="true"}}
+    {{column field="orden" width="60"}}
+  {{/grid}}
+{{/define}}

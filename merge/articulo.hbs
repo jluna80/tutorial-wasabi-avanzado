@@ -1,0 +1,46 @@
+{{#define id="articulo"}}
+  {{action id="eliminar" hide="true"}}
+
+  {{action id="menuReportesArticulos" hide="true" type="menu" menu="menuReportesArticulos" label="Reportes" color="grey" isBrowserAction="true"}}
+  {{#menu id="menuReportesArticulos" color="grey"}}
+    {{item action="reporteListaArticulos" text="Lista Artículos"}}
+  {{/menu}}  
+
+  {{#view id="listaArticulos"}}
+    {{#find}}
+      {{include field="base"}}
+      {{sort field="base.codigo" direction="asc"}}
+    {{/find}}
+  {{/view}}
+
+  {{#view id="lista"}}
+    {{#find}}
+      {{include field="base.codigo"}}
+      {{include field="base.estatus"}}
+      {{search field="_name"}}
+      {{search field="base.codigo"}}
+      {{search field="base._estatus"}}
+      {{sort field="base.codigo" direction="asc"}}
+    {{/find}}
+  {{/view}}
+  {{#section id="base"}}
+    {{field id="nombre" type="expr" value="=@descripcion"}}
+  {{/section}}
+  {{#grid id="adjuntos" section="adjuntos" allowRemove="true" allowSort="true" sortBy="orden, fecha"}}
+    {{column field="nombre" width="350"}}
+    {{column field="tipo" width="200"}}
+    {{column field="fecha" width="100" readOnly="true"}}
+    {{column field="ext" width="100" readOnly="true"}}
+    {{column field="tamano" width="100" readOnly="true"}}
+    {{column field="orden" width="60"}}
+  {{/grid}}
+{{/define}}
+{{#markup}}
+  {{#template id="lista"}}
+    <div>
+      {{_name}}</br>
+      <span style="font-size:12px;">{{base.codigo}}</span>
+      <span style="font-size:12px;float:right;">{{base._estatus}}</span>
+    </div>
+  {{/template}}
+{{/markup}}

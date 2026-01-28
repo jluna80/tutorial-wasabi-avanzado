@@ -1,0 +1,126 @@
+{{#define id="_user"}}
+  {{action id="eliminar" hide="true"}}  
+
+  {{#view id="lista"}}
+    {{#find}}
+      {{include field="_id"}}
+      {{include field="_name"}}
+      {{include field="base.clave"}}
+      {{include field="base.estatus"}}
+      {{include field="base.area"}}
+      {{include field="base.correo"}}
+      {{include field="base.bloqueadoAcceso"}}
+      {{include field="base._perfilAcceso"}}
+      {{include field="base.estado"}}
+      {{include field="_access.isAdminUser"}}
+      {{sort field="_name" direction="asc"}}
+      {{search field="_name"}}
+      {{search field="base.correo"}}
+      {{search field="base._perfilAcceso"}}
+      {{search field="prestadorServicios.clave" directSearchIfLength="9,10,11,12,13,14,15,16,17,18"}}
+      {{filter condition="=servicio" field="base.servicio" in="=servicio"}}
+      {{filter condition="=area" field="base.area" in="=area"}}
+      {{filter condition="=citasExtraordinarias" field="prestadorServicios.citasExtraordinarias" eq="=citasExtraordinarias"}}
+      {{filter condition="=user.limitLevel" field="base.nivelAcceso" eq="user.limitLevel"}}
+    {{/find}}
+    {{calc field="estaBloqueado" type="expr" value="=calc.isTrue(base.bloqueadoAcceso)"}}
+    {{calc field="estaInactivo" type="expr" value="=base.estado=='inactivo'"}}
+    {{calc field="esAdministrador" type="expr" value="=_access.isAdminUser"}}
+  {{/view}}
+  {{#view id="notify"}}
+    {{#find}}
+      {{include field="_name"}}
+      {{sort field="_name" direction="asc"}}
+      {{filter field="_access.level" neq="externo"}}
+      {{search field="_name"}}
+      {{search field="prestadorServicios.clave" directSearchIfLength="9,10,11,12,13,14,15,16,17,18"}}
+    {{/find}}
+  {{/view}}
+  {{#section id="base"}}
+    {{#field id="nombres"}}
+      {{#onChange}}
+        {{set nombre="=@alias||calc.concat(@nombres, @apellidoPaterno, @apellidoMaterno)"}}
+      {{/onChange}}
+    {{/field}}
+    {{#field id="apellidoPaterno"}}
+      {{#onChange}}
+        {{set nombre="=@alias||calc.concat(@nombres, @apellidoPaterno, @apellidoMaterno)"}}
+      {{/onChange}}
+    {{/field}}
+    {{#field id="apellidoMaterno"}}
+      {{#onChange}}
+        {{set nombre="=@alias||calc.concat(@nombres, @apellidoPaterno, @apellidoMaterno)"}}
+      {{/onChange}}
+    {{/field}}
+    {{#field id="alias"}}
+      {{#onChange}}
+        {{set nombre="=@alias||calc.concat(@nombres, @apellidoPaterno, @apellidoMaterno)"}}
+      {{/onChange}}
+    {{/field}}
+    {{field id="esLocal" type="expr" value="=@metodoAcceso=='local'"}}
+    {{field id="esExterno" type="expr" value="=@nivelAcceso=='externo'"}}
+    {{field id="noEsExterno" type="expr" value="=!esExterno"}}
+    {{field id="estaInactivo" type="expr" value="=estado=='inactivo'"}}
+    {{field id="verEmpresa" type="expr" value="=calc.globalVariableIsTrue('empresas')&&!calc.globalVariable('empresaPrincipal')"}}
+    {{#field id="contrasena"}}
+      {{#onChange}}
+        {{set hash="=calc.sha1(calc.text(contrasena))"}}
+        {{set contrasena="=calc.mask(contrasena)"}}
+        {{#update section="_access"}}
+          {{set changePassword="=true"}}
+        {{/update}}
+      {{/onChange}}
+    {{/field}}
+    {{field id="nivelAcceso" defaultValue="=user.limitLevel" forceReadOnly="=user.limitLevel"}}
+    {{#field id="perfilAcceso"}}
+      {{#onChange clearFields="rolAcceso"}}
+        {{set nivelAcceso="=base.nivelAcceso"}}
+      {{/onChange}}
+    {{/field}}
+  {{/section}}
+  {{#grid id="adjuntos" section="adjuntos" allowRemove="true" allowSort="true" sortBy="orden, fecha"}}
+    {{column field="nombre" width="350"}}
+    {{column field="tipo" width="200"}}
+    {{column field="fecha" width="100" readOnly="true"}}
+    {{column field="ext" width="100" readOnly="true"}}
+    {{column field="tamano" width="100" readOnly="true"}}
+    {{column field="orden" width="60"}}
+  {{/grid}}
+  {{#section id="_access"}}
+    {{field id="method" type="expr" value="=base.metodoAcceso"}}
+    {{field id="userId" type="expr" value="=base.correo"}}
+    {{field id="hash" type="expr" value="=base.hash"}}
+    {{field id="company" type="expr" value="=base.empresa"}}
+    {{field id="_company" type="expr" value="=base._empresa"}}
+    {{field id="isActive" type="expr" value="=calc.in(base.estatus,['activo','afectado'])&&calc.in(base.estado,['activo'])&&!base.sinAcceso"}}
+    {{field id="isExternalUser"type="expr" value="=base.esExterno"}}
+    {{field id="autoPrint" type="expr" value="=calc.isTrue(base.autoImpresion)"}}
+    {{field id="name" type="expr" value="=base.nombre"}}
+    {{field id="profile" type="expr" value="=base.perfilAcceso"}}
+    {{field id="level" type="expr" value="=base.nivelAcceso"}}
+    {{field id="roles" type="expr" value="=base.rolesAcceso"}}
+    {{field id="readOnly" type="expr" value="=base.nivelAcceso=='consulta'"}}
+    {{field id="blocked" type="expr" value="=calc.isTrue(base.bloqueadoAcceso)"}}
+    {{field id="blockedReason" type="expr" value="=base.motivoBloqueo"}}
+  {{/section}}   
+{{/define}}  
+{{#markup}}
+  {{#template id="lista"}}
+    <div>
+      {{_name}}
+      </br><span style="font-size:12px;">{{base.correo}}</span>
+      <span style="font-size:12px;float:right;">{{base._perfilAcceso}}</span>
+      </br><span style="font-size:12px;white-space:pre-wrap;">{{base._area}}</span>
+      {{#if estaBloqueado}}
+        <span class="fondo-amarillo" style="font-size:12px;float:right;"><strong>&nbsp;&nbsp;Bloqueado&nbsp;&nbsp;</strong></span>
+        </br>
+      {{/if}}
+      {{#if estaInactivo}}
+        <span class="fondo-rojo" style="font-size:12px;float:right;"><strong>&nbsp;&nbsp;Inactivo&nbsp;&nbsp;</strong></span>
+      {{/if}}
+      {{#if esAdministrador}}
+        <span class="fondo-verde" style="font-size:12px;float:right;"><strong>&nbsp;&nbsp;Administrador&nbsp;&nbsp;</strong></span>
+      {{/if}}
+    </div>    
+  {{/template}}
+{{/markup}}
