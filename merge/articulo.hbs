@@ -17,12 +17,27 @@
     {{#find}}
       {{include field="base.codigo"}}
       {{include field="base.estatus"}}
+      {{include field="base.tipoArticulo"}}
       {{search field="_name"}}
       {{search field="base.codigo"}}
       {{search field="base._estatus"}}
+      {{search field="base._tipoArticulo"}}
       {{sort field="base.codigo" direction="asc"}}
     {{/find}}
   {{/view}}
+
+  {{#view id="insumos"}}
+    {{#find}}
+      {{include field="base.codigo"}}
+      {{include field="base.descripcion"}}
+      {{search field="base.codigo"}}
+      {{search field="base.descripcion"}}
+      {{sort field="base.codigo" direction="asc"}}
+      {{filter field="base.estatus" eq="activo"}}
+      {{filter field="base.tipoArticulo" eq="insumo"}}
+    {{/find}}
+  {{/view}}
+
   {{#section id="base"}}
     {{field id="nombre" type="expr" value="=@descripcion"}}
   {{/section}}
@@ -40,7 +55,7 @@
     <div>
       {{_name}}</br>
       <span style="font-size:12px;">{{base.codigo}}</span>
-      <span style="font-size:12px;float:right;">{{base._estatus}}</span>
+      <span style="font-size:12px;float:right;">{{base._tipoArticulo}}</span>
     </div>
   {{/template}}
 {{/markup}}

@@ -114,7 +114,19 @@
 {"name":"userRole","code":"catalogoArticulos","display":"Catálogo Artículos","order":1}
 {"index":{"_id":"userRole/catalogoClientes"}}
 {"name":"userRole","code":"catalogoClientes","display":"Catálogo Clientes","order":2}
+{"index":{"_id":"userRole/catalogoAlmacenes"}}
+{"name":"userRole","code":"catalogoAlmacenes","display":"Catálogo Almacenes","order":3}
 {"index":{"_id":"userRole/solicitudReclamo"}}
-{"name":"userRole","code":"solicitudReclamo","display":"Solicitud Reclamo o Sugerencia","order":3}
-{"index":{"_id":"userRole/solicitudReclamoTableros"}}
-{"name":"userRole","code":"solicitudReclamoTableros","display":"Solicitud Reclamo o Sugerencia - Tableros","order":4}
+{"name":"userRole","code":"solicitudReclamo","display":"Solicitud Reclamo o Sugerencia","order":4}
+{"index":{"_id":"userRole/operacionEntradaDiversa"}}
+{"name":"userRole","code":"operacionEntradaDiversa","display":"Operación Entrada Diversa","order":5}
+{"index":{"_id":"userRole/operacionSalidaDiversa"}}
+{"name":"userRole","code":"operacionSalidaDiversa","display":"Operación Salida Diversa","order":6}
+{"index":{"_id":"userRole/operacionConsumo"}}
+{"name":"userRole","code":"operacionConsumo","display":"Operación Consumo","order":7}
+{"index":{"_id":"userRole/cancelacionTransaccion"}}
+{"name":"userRole","code":"cancelacionTransaccion","display":"Cancelación Transacción","order":8}
+{"index":{"_id":"tipoArticulo/activoFijo"}}
+{"name":"tipoArticulo","code":"activoFijo","display":"Activo Fijo","order":1}
+{"index":{"_id":"tipoArticulo/insumo"}}
+{"name":"tipoArticulo","code":"insumo","display":"Insumo","order":2}

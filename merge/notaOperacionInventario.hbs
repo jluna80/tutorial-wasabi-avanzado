@@ -1,0 +1,33 @@
+{{#define id="notaOperacionInventario"}}
+  {{param startOnOpen="articulos"}}
+  {{action id="tool" condition="=_isAffected&&base.estatus=='afectado'" type="cancel" label="Cancelar" color="red" visibleMode="close" workflow="cancelar" userRole="cancelacionTransaccion"}}
+
+  {{#section id="base"}}
+    {{field id="tieneValorUnitario" type="expr" value="=_created.subType=='entradaDiversa'"}}
+  {{/section}}
+
+  {{#section id="articulos"}}
+    {{#field id="articulo"}}
+      {{#onChange getSourceDoc="true" getSourceDocAs="_articulo"}}
+        {{set codigo="=base.codigo"}}
+        {{set descripcion="=base.descripcion"}}
+      {{/onChange}}
+    {{/field}}
+    {{field id="importe" type="calc" value="=cantidad*valorUnitario"}}
+  {{/section}}
+
+  {{#grid id="articulos" section="articulos" allowRemove="true" allowInsert="true"}}
+    {{column field="articulo" width="450"}}
+    {{column field="cantidad" width="100"}}
+    {{column field="valorUnitario" width="150" show="base.tieneValorUnitario"}}
+  {{/grid}}
+
+  {{#grid id="adjuntos" section="adjuntos" allowRemove="true" allowSort="true" sortBy="orden, fecha"}}
+    {{column field="nombre" width="350"}}
+    {{column field="tipo" width="200"}}
+    {{column field="fecha" width="100" readOnly="true"}}
+    {{column field="ext" width="100" readOnly="true"}}
+    {{column field="tamano" width="100" readOnly="true"}}
+    {{column field="orden" width="60"}}
+  {{/grid}}
+{{/define}}

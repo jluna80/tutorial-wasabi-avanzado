@@ -8,6 +8,7 @@
     {{set apellidoPaterno="=persona.apellidoPaterno"}}
     {{set apellidoMaterno="=persona.apellidoMaterno"}}
     {{set nombres="=persona.nombres"}}
+    {{set nombre="=persona.nombre"}}
     {{set clave="=persona.clave"}}
   {{/transform}}
 
@@ -40,6 +41,11 @@
     {{when tipo="activos" return="nuevo,instalar,continuar,activo-controlado,activo-no-controlado,no-realizado"}}
     {{when tipo="inactivos" return="suspender,eliminar,remover,inactivo,rechazado,descartado,cancelado,sinExistencia"}}
   {{/function}}  
+
+  {{#function id="semaforo"}}
+    {{define type="param" id="fecha"}}
+    {{default return="=moment().diff(moment(fecha), 'minutes')>2?'red':'green'"}}
+  {{/function}}
 {{/define}}
 
 {{#markup}}

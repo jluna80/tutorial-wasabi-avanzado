@@ -38,6 +38,20 @@
     {{/find}}
   {{/view}}
 
+  {{#view id="almacenes"}}
+    {{#find}}
+      {{include field="persona.nombre"}}
+      {{include field="persona.clave"}}
+      {{include field="persona.grupo"}}    
+      {{sort condition="=!board.sort" field="_name" direction="asc"}}
+      {{sort condition="=board.sort" field="=board.sort" direction="=board.direction"}}
+      {{filter field="_hide" neq="=true"}}
+      {{filter field="_parent.type" eq="almacen"}}
+      {{search field="persona.nombreCompleto"}}
+      {{search field="persona.clave"}}
+    {{/find}}
+  {{/view}}
+
   {{#view id="_name"}}
     {{#find}}
       {{include field="_name"}}
@@ -56,19 +70,33 @@
     {{/find}}
   {{/view}}
 
-  {{#transform id="copiarSolicitudReclamo"}}
+  {{#transform id="copiarPersona"}}
     {{update section="persona" transform="copiarPersona"}}
   {{/transform}}
 
-  {{#action id="solicitudReclamo" source="notaSolicitudReclamo" label="Reclamo o Sugerencia" hide="true" transform="copiarSolicitudReclamo" type="add-subdoc" btnSolid="true" visibleMode="close" color="deep-orange" onlyPost="true" userRole="solicitudReclamo"}}
+  {{#action id="solicitudReclamo" source="notaSolicitudReclamo" label="Reclamo o Sugerencia" hide="true" transform="copiarPersona" type="add-subdoc" btnSolid="true" visibleMode="close" color="deep-orange" onlyPost="true" userRole="solicitudReclamo"}}
     {{param servicio="reclamo"}}
   {{/action}}
+
+  {{action id="entradaDiversa" source="notaOperacionInventario" subType="entradaDiversa" subTypeName="Entrada Diversa" label="Entrada Diversa" hide="true" transform="copiarPersona" type="add-subdoc" btnSolid="true" visibleMode="close" color="deep-orange" onlyPost="true"}}
+  {{action id="salidaDiversa" source="notaOperacionInventario" subType="salidaDiversa" subTypeName="Salida Diversa" label="Salida Diversa" hide="true" transform="copiarPersona" type="add-subdoc" btnSolid="true" visibleMode="close" color="deep-orange" onlyPost="true"}}
+
+  {{action id="menuOperacionesInventario" hide="true" type="menu" menu="menuOperacionesInventario" label="Operación" color="deep-orange" btnSolid="true"}}
+  {{#menu id="menuOperacionesInventario" color="deep-orange"}}
+    {{item action="entradaDiversa" text="Entrada Diversa" userRole="operacionEntradaDiversa"}}
+    {{item action="salidaDiversa" text="Salida Diversa" userRole="operacionSalidaDiversa"}}
+  {{/menu}}  
 
   {{#action id="verExpediente" hide="true" type="sub-link" label="Bitácora General" color="green" visibleMode="close"}}
     {{#link href="='/nota/bitacora'" name="=calc.concat('Bitácora:', persona.nombreCompleto)" title="=calc.concat('Bitácora:', persona.nombreCompleto)"}}
       {{param involucrado="_id"}}
     {{/link}}
   {{/action}}
+  {{#action id="verInventarioPersona" type="sub-link" label="Ver Inventario" btnSolid="true" color="primary" visibleMode="close"}}
+    {{#link href="='/_invPersona/cubo'" name="=_name" title="=_name"}}
+      {{param id="_id"}}
+    {{/link}}
+  {{/action}}  
 {{/define}}
 
 {{#markup}}
@@ -213,6 +241,21 @@
     </div>
   {{/template}}  
   {{#template id="verCliente"}}
+    <div class="list-material">
+      <li class="has-action-left">
+        <div class="list-action-left"><i class="icon ion-{{contexto.icono}} text-{{contexto.color}}"></i></div>
+        <div class="list-content">
+          {{persona.nombre}}
+          <span style="font-size:12px;float:right;">{{persona.grupo}}</span>
+          </br><span style="font-size:12px;">{{persona.clave}}</span>
+          {{#if _readOnly}}
+          <span class="read-only" style="font-size:12px;"><strong>&nbsp;&nbsp;Solo Lectura&nbsp;&nbsp;</strong></span>
+          {{/if}}
+        </div>
+      </li>
+    </div>
+  {{/template}}
+  {{#template id="verAlmacen"}}
     <div class="list-material">
       <li class="has-action-left">
         <div class="list-action-left"><i class="icon ion-{{contexto.icono}} text-{{contexto.color}}"></i></div>

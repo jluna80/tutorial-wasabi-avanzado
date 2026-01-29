@@ -1,0 +1,34 @@
+{{#define type="doc" id="mov"}}
+  {{#view id="resumenInventarioAlmacen"}}
+    {{#pipeline}}
+      {{filter field="aux" eq="='inv'"}}    
+      {{filter condition="=id" field="='cuenta'" eq="=id"}}
+      {{group field="cantidadFactor" type="sum" as="conteo"}}
+    {{/pipeline}}
+    {{calc field="color" type="expr" value="='verde'"}}
+    {{calc field="backgroudColor" type="expr" value="='gris'"}}
+  {{/view}}
+
+  {{#view id="invPersona" onlyMapped2="true"}}
+    {{#pipeline}}
+      {{filter field="aux" eq="='inv'"}}    
+      {{filter condition="=id" field="='cuenta'" eq="=id"}}
+      {{group field="cuenta"}}
+      {{group field="_cuenta"}}
+      {{group field="codigo"}}
+      {{group field="descripcion"}}
+      {{group field="cantidadFactor" type="sum" as="cantidad"}}
+      {{match field="cantidad" neq="=0"}}
+    {{/pipeline}}
+    {{map field="codigo" value="=codigo"}}
+    {{map field="descripcion" value="=descripcion"}}
+    {{map field="articulo" value="=calc.concat(codigo, descripcion)"}}
+    {{map field="cantidad" value="=cantidad"}}
+    {{map field="conteo" value="=1"}}
+  {{/view}}
+
+  {{#cube id="invPersona" name="Inventario" view="invPersona" allowSortingBySummary="true" allowSorting="true" allowFiltering="true" exportToExcel="true" allowExpandAll="true" showColumnGrandTotals="true"}}
+    {{row field="articulo" label="Artículo" width="400"}}
+    {{sum field="cantidad" label="Cantidad" format="#,.##"}}
+  {{/cube}}
+{{/define}}

@@ -42,7 +42,7 @@
     {{calc field="nombre" type="expr" value="=join._name"}}
     {{calc field="estatus" type="expr" value="=calc.getRef(@_updated,'moment')||base.estatus"}}
     {{calc field="_estatus" type="expr" value="=calc.getRef(@_updated,'_moment')||base._estatus"}}
-    {{calc field="semaforo" type="expr" value="=moment().diff(moment(_created.date), 'minutes')>2?'red':'green'"}}
+    {{calc field="semaforo" type="expr" value="=fn('semaforo', _created.date)"}}
   {{/view}}
 
   {{#view id="inactivos"}}
@@ -80,8 +80,8 @@
     {{calc field="nombre" type="expr" value="=join._name"}}
     {{calc field="estatus" type="expr" value="=calc.getRef(@_updated,'moment')||base.estatus"}}
     {{calc field="_estatus" type="expr" value="=calc.getRef(@_updated,'_moment')||base._estatus"}}
-    {{calc field="icono" type="expr" value="=_updated.moment=='rechazado'?'close':'checkmark'"}}
-    {{calc field="color" type="expr" value="=_updated.moment=='rechazado'?'red':'grey'"}}
+    {{calc field="icono" type="expr" value="=fn('iconoSolicitud', _updated.moment)"}}
+    {{calc field="color" type="expr" value="=fn('colorSolicitud', _updated.moment)"}}
   {{/view}}
 
   {{#view id="todo"}}
