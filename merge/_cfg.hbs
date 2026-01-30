@@ -82,4 +82,36 @@
     {{#if motivo}}<br>Motivo: {{_motivo}}{{/if}}
     {{#if comentarios}}<br>{{comentarios}}{{/if}}
   {{/template}}  
+
+  {{#template id="notificacionReclamo"}}
+  <!DOCTYPE html>
+  <html lang="es">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>{{_name}}</title>
+      <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
+          .container { max-width: 600px; margin: 20px auto; background: #ffffff; padding: 20px; border-radius: 8px; }
+          .header { text-align: center; padding-bottom: 20px; border-bottom: 1px solid #eeeeee; }
+          .content { padding: 20px 0; }
+          .button { display: inline-block; padding: 12px 24px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold; }
+          .footer { font-size: 12px; text-align: center; color: #777; padding-top: 20px; border-top: 1px solid #eeeeee; }
+      </style>
+  </head>
+  <body>
+      <div class="container">
+          <div class="header">
+              <h1 style="margin: 0; color: #444;">Reclamo o Sugerencia</h1>
+          </div>
+          <div class="content">
+            {{base._reclamo}}
+          </div>
+          <div class="footer">
+              <p>&copy; 2026 Tu Empresa. Todos los derechos reservados.</p>
+          </div>
+      </div>
+  </body>
+  </html>
+  {{/template}}
 {{/markup}}

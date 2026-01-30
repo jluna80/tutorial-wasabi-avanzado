@@ -1,5 +1,5 @@
 {{#define id="notaOperacionInventario"}}
-  {{param startOnOpen="articulos"}}
+  {{!-- {{param startOnOpen="articulos"}} --}}
   {{action id="tool" condition="=_isAffected&&base.estatus=='afectado'" type="cancel" label="Cancelar" color="red" visibleMode="close" workflow="cancelar" userRole="cancelacionTransaccion"}}
 
   {{#section id="base"}}

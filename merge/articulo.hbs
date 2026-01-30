@@ -26,6 +26,18 @@
     {{/find}}
   {{/view}}
 
+  {{#view id="activosFijos"}}
+    {{#find}}
+      {{include field="base.codigo"}}
+      {{include field="base.descripcion"}}
+      {{search field="base.codigo"}}
+      {{search field="base.descripcion"}}
+      {{sort field="base.codigo" direction="asc"}}
+      {{filter field="base.estatus" eq="activo"}}
+      {{filter field="base.tipoArticulo" eq="activoFijo"}}
+    {{/find}}
+  {{/view}}
+
   {{#view id="insumos"}}
     {{#find}}
       {{include field="base.codigo"}}

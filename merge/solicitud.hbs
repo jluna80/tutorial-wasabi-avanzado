@@ -123,10 +123,11 @@
     {{list itemTemplate="verSolicitud" allowSearch="true" allowRefresh="true" allowEdit="false" allowInsert="false"}}
   {{/browser}}
 
-  {{#transform id="copiarRechazoSolicitud"}}
+  {{#transform id="copiarSolicitud"}}
     {{update section="persona" value="=persona"}}
     {{#update section="base"}}
       {{set solicitud="=_params"}}
+      {{set _solicitud="=_params._name"}}
     {{/update}}
   {{/transform}}
 
@@ -143,7 +144,9 @@
     {{/update}}
   {{/transform}}
 
-  {{action id="rechazoSolicitud" source="notaRechazoSolicitud" label="Rechazo Solicitud" transform="copiarRechazoSolicitud" hide="true" type="add-subdoc" visibleMode="close" color="red" icon="close" btnSolid="true" onlyPost="true"}}
+  {{action id="consumoMateriales" source="notaOperacionInventario" subType="consumo" subTypeName="Consumo Materiales" label="Consumo Materiales" hide="true" transform="copiarSolicitud" type="add-subdoc" visibleMode="close" color="deep-orange" onlyPost="true" userRole="operacionConsumo"}}
+
+  {{action id="rechazoSolicitud" source="notaRechazoSolicitud" label="Rechazo Solicitud" transform="copiarSolicitud" hide="true" type="add-subdoc" visibleMode="close" color="red" icon="close" btnSolid="true" onlyPost="true"}}
   {{action id="avance" source="notaRegistroAvance" label="=_params.subTypeName||'Avance'" subType="=calc.concatLodash(_params.servicio,_params.subType)" subTypeName="=_params.subTypeName||'Avance'" transform="copiarAvance" hide="true" type="add-subdoc" visibleMode="close" color="green" icon="forward" onlyPost="true" btnSolid="true"}} 
   {{action id="avanceFinal" source="notaRegistroAvance" label="=_params.subTypeName||'Avance'" subType="=calc.concatLodash(_params.servicio,_params.subType)" subTypeName="=_params.subTypeName||'Avance'" transform="copiarAvance" hide="true" type="add-subdoc" visibleMode="close" color="primary" icon="checkmark" onlyPost="true" btnSolid="true"}} 
 {{/define}}
